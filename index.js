@@ -33,6 +33,7 @@ function Hyperdrive (storage, key, opts) {
     valueEncoding: messages.Stat,
     contentFeed: true,
     sparse: opts.sparse,
+    secretKey: opts.secretKey,
     reduce // TODO: make configurable
   })
 
