@@ -9,7 +9,7 @@
     "duplexify": "^3.5.0",
     "from2": "^2.3.0",
     "hypercore": "^6.10.4",
-    "hyperdb": "github:jimpick/hyperdb#authorized_fix",
+    "hyperdb": "github:mafintosh/hyperdb#fix-authorized",
     "inherits": "^2.0.3",
     "is-options": "^1.0.1",
     "mutexify": "^1.1.0",
