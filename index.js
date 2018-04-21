@@ -32,6 +32,7 @@ function Hyperdrive (storage, key, opts) {
   const db = opts.checkout || hyperdb(storage, key, {
     valueEncoding: messages.Stat,
     contentFeed: true,
+    secretKey: opts.secretKey,
     sparse: opts.sparse,
     secretKey: opts.secretKey,
     reduce // TODO: make configurable
@@ -493,7 +494,7 @@ Hyperdrive.prototype.ready = function (cb) {
 function reduce (a, b) {
   if (!a.value) return b
   if (!b.value) return a
-  return a.value.mtime < b.value.mtime
+  return a.value.mtime > b.value.mtime ? a : b
 }
 
 function noop () {}
