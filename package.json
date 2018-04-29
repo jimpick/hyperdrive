@@ -9,7 +9,7 @@
     "duplexify": "^3.5.0",
     "from2": "^2.3.0",
     "hypercore": "^6.10.4",
-    "hyperdb": "jimpick/hyperdb#57045253e05be41a2ea6a1dcc5edaf11be55d290",
+    "hyperdb": "jimpick/hyperdb#38b74f4ddb39e5217980a783ce254679fd591a1e",
     "inherits": "^2.0.3",
     "is-options": "^1.0.1",
     "mutexify": "^1.1.0",
