@@ -9,7 +9,7 @@
     "duplexify": "^3.5.0",
     "from2": "^2.3.0",
     "hypercore": "^6.10.4",
-    "hyperdb": "mafintosh/hyperdb#04516972a76ca656385d917fd3439f41b74f69a3",
+    "hyperdb": "jimpick/hyperdb#693560fd6b2d0c6d0abed7199efa45445a04c7db",
     "inherits": "^2.0.3",
     "is-options": "^1.0.1",
     "mutexify": "^1.1.0",
