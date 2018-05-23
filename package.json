@@ -1,6 +1,6 @@
 {
   "name": "@jimpick/hyperdrive-hyperdb-backend",
-  "version": "9.12.3-5",
+  "version": "9.12.3-6",
   "description": "Hyperdrive is a secure, real time distributed file system",
   "main": "index.js",
   "dependencies": {
@@ -9,7 +9,7 @@
     "duplexify": "^3.5.0",
     "from2": "^2.3.0",
     "hypercore": "^6.10.4",
-    "hyperdb": "mafintosh/hyperdb#73fd85eaade01f5eb8decdea7bbbad9218499ce1",
+    "hyperdb": "^3.0.0",
     "inherits": "^2.0.3",
     "is-options": "^1.0.1",
     "mutexify": "^1.1.0",
