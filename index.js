@@ -37,9 +37,10 @@ function Hyperdrive (storage, key, opts) {
   events.EventEmitter.call(this)
 
   const self = this
+  this.contentStorage = opts.files ? contentStorage.bind(this, storage, opts.files) : true
   const db = opts.checkout || hyperdb(storage, key, {
     valueEncoding: messages.Stat,
-    contentFeed: opts.files ? contentStorage.bind(this, storage, opts.files) : true,
+    contentFeed: this.contentStorage,
     secretKey: opts.secretKey,
     sparse: opts.sparse,
     sparseContent: opts.sparse || opts.latest || opts.sparseContent,
@@ -518,7 +519,15 @@ Hyperdrive.prototype.createWriteStream = function (path, opts) {
 
   function write (batch, cb) {
     if (!opened) return open(batch, cb)
-    db.localContent.append(batch, cb)
+    if (typeof self.contentStorage === 'function') {
+      db.localContent._storage.data.importing = opts.importing
+    }
+    db.localContent.append(batch, function (err) {
+      if (typeof self.contentStorage === 'function') {
+        db.localContent._storage.data.importing = false
+      }
+      cb(err)
+    })
   }
 
   function flush (cb) {
