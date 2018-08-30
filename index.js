@@ -105,6 +105,13 @@ function Hyperdrive (storage, key, opts) {
 
 inherits(Hyperdrive, events.EventEmitter)
 
+Object.defineProperty(Hyperdrive.prototype, 'writable', {
+  enumerable: true,
+  get: function () {
+    return true
+  }
+})
+
 Hyperdrive.prototype.iterator = function (path, opts) {
   return iterator(this, path, opts)
 }
