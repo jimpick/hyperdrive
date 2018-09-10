@@ -1,5 +1,5 @@
 {
-  "name": "@jimpick/hyperdrive",
+  "name": "@jimpick/hyperdrive-next",
   "version": "9.12.3-5",
   "description": "Hyperdrive is a secure, real time distributed file system",
   "main": "index.js",
