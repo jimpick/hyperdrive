@@ -610,6 +610,8 @@ Hyperdrive.prototype.ready = function (cb) {
 }
 
 function reduce (a, b) {
+  if (!a.value) return b
+  if (!b.value) return a
   return a.value.mtime > b.value.mtime ? a : b
 }
 
