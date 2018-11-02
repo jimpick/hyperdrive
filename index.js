@@ -497,6 +497,18 @@ Hyperdrive.prototype.createWriteStream = function (path, opts) {
   var opened = false
   var release = null
 
+  const counter = (limit) => {
+    let last = 0
+    return (now) => {
+      if (last + limit < now) {
+        last = Number(now)
+        return true
+      }
+      return false
+    }
+  }
+  const count = counter(10000000)
+
   return bulk(write, flush)
     .once('close', unlock)
     .once('finish', unlock)
@@ -529,7 +541,12 @@ Hyperdrive.prototype.createWriteStream = function (path, opts) {
     if (typeof self.contentStorage === 'function') {
       db.localContent._storage.data.importing = opts.importing
     }
+
     db.localContent.append(batch, function (err) {
+      if (count(db.localContent.byteLength)) {
+        flush()
+        console.log('write!', db.localContent.byteLength)
+      }
       if (typeof self.contentStorage === 'function') {
         db.localContent._storage.data.importing = false
       }
@@ -541,6 +558,7 @@ Hyperdrive.prototype.createWriteStream = function (path, opts) {
     if (!opened) return open(null, cb)
     st.size = db.localContent.byteLength - st.byteOffset
     st.blocks = db.localContent.length - st.offset
+    console.log(st)
     db.put(path, st, cb)
   }
 
