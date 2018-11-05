@@ -1,6 +1,7 @@
 var tape = require('tape')
 var sodium = require('sodium-universal')
 var create = require('./helpers/create')
+var stream = require('stream')
 
 tape('write and read', function (t) {
   var archive = create()
@@ -169,4 +170,50 @@ tape('write and read, no cache', function (t) {
       t.end()
     })
   })
+})
+
+tape('flush while writing', function (t) {
+  const DATA = Buffer.alloc(32 * 1000).fill('0123')
+  const archive = create()
+
+  let rs
+  const readbufs = []
+
+  const source = new stream.Readable({
+    read () {}
+  })
+  source.push(DATA)
+  source.push(DATA)
+
+  let ws = archive.createWriteStream('file', {
+    size: 10 * 32 * 1000,
+    flushAtStart: true,
+    afterFlush: afterFlush
+  })
+  source.pipe(ws)
+
+  function afterFlush (err, st, done) {
+    t.error(err)
+    if (!rs) startRead()
+    if (done) setTimeout(() => rs.emit('end'), 200)
+  }
+
+  function startRead () {
+    rs = archive.createReadStream('file')
+    rs.on('end', finish)
+    rs.on('data', (data) => {
+      readbufs.push(data)
+      if (readbufs.length === 1) {
+        source.push(DATA)
+        source.push(null)
+      }
+    })
+  }
+
+  function finish () {
+    const expected = Buffer.alloc(3 * 32 * 1000).fill('0123')
+    let real = Buffer.concat(readbufs)
+    t.same(real, expected, 'End result matches.')
+    t.end()
+  }
 })
