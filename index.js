@@ -483,7 +483,7 @@ Hyperdrive.prototype.createWriteStream = function (path, opts) {
   const self = this
   const db = this.db
   const st = {
-    size: 0,
+    size: opts.size || 0,
     blocks: 0,
     offset: 0,
     byteOffset: 0,
@@ -496,6 +496,8 @@ Hyperdrive.prototype.createWriteStream = function (path, opts) {
 
   var opened = false
   var release = null
+
+  let blockSize = 0
 
   return bulk(write, flush)
     .once('close', unlock)
@@ -529,7 +531,10 @@ Hyperdrive.prototype.createWriteStream = function (path, opts) {
     if (typeof self.contentStorage === 'function') {
       db.localContent._storage.data.importing = opts.importing
     }
+
     db.localContent.append(batch, function (err) {
+      if (opts.flushAtStart && !blockSize) flushAtStart()
+
       if (typeof self.contentStorage === 'function') {
         db.localContent._storage.data.importing = false
       }
@@ -537,11 +542,24 @@ Hyperdrive.prototype.createWriteStream = function (path, opts) {
     })
   }
 
+  function flushAtStart () {
+    if (!blockSize) blockSize = (db.localContent.byteLength - st.byteOffset) / (db.localContent.length - st.offset)
+    st.size = st.size || db.localContent.byteLength - st.byteOffset
+    st.blocks = st.size / blockSize
+    db.put(path, st, opts.afterFlush || noop)
+  }
+
   function flush (cb) {
-    if (!opened) return open(null, cb)
+    if (!cb) cb = noop
+    if (!opened) return open(null, done)
     st.size = db.localContent.byteLength - st.byteOffset
     st.blocks = db.localContent.length - st.offset
-    db.put(path, st, cb)
+    db.put(path, st, done)
+
+    function done (err) {
+      cb(err)
+      if (opts.afterFlush) opts.afterFlush(err, st, true)
+    }
   }
 
   function unlock () {
